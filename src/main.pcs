@@ -1,0 +1,401 @@
+
+
+.include "header.pcs"
+.include "pce.inc"
+
+
+.include "variable.pcs"
+
+
+
+start:
+	sei
+	nop
+	csh
+	nop
+	cld
+
+	lda #$FF
+	tam #$01
+	lda #$F8
+	tam #$02
+	
+	lda #$00
+	tam #$80
+	
+	
+	
+	jsr init_vdc
+	PCE_VCE_CONTROL,$00
+
+Init:	
+	jsr load_sprites              
+	jsr load_pal
+
+
+	jsr clear_ram
+	jsr init_game
+	
+	
+	;Game
+	PCE_VDC CR,$00CC
+	cli	
+	
+	
+main_loop:
+	
+	jsr wait_vblank
+	
+	
+	jsr Text
+	;------------------------
+	
+	jsr LKS_joypad
+	
+	
+	lda hero+_pv
+	cmp #0
+	bne +
+	
+	
+		jsr Text_end
+		
+		lda LKS_STDCTRL+_START
+		cmp #1
+		beq ++
+		
+			jmp main_loop
+		++:
+		
+		jmp Init
+	+:
+	
+	jsr Gameplay
+	
+	
+	
+	jsr Draw_hero
+	
+	;-----
+	
+	jsr Animation_Hero
+	jsr Animation_ennemi1
+	jsr Animation_ennemi2
+	
+	jsr Draw_Ennemi
+	jsr Draw_Ennemi2
+	
+	jsr Fouet_anim
+	
+	jsr Anim_Fouet
+	;------------------------
+	
+	jsr Hitbox_HE
+	
+	jsr Hitbox_EF
+	jsr Hitbox_EF2
+
+	jsr Sprite_VDC
+
+	jmp main_loop  
+	
+	
+
+.MACRO compute_digit_for_base8 ARGS _base
+	; [input] registre A sur 16 bits qui contient le nombre dans la bonne tranche par rapport à _base
+	;     Autrement dit, _base <= A < (10 * _base)
+	; [output]
+	;     [X] le registre X contient le chiffre pour la _base
+	;     [A] contient le reste (module _base) ==> donc 0 <= A < _base
+	;
+	; _base vaut une puissance non nul de 10
+	; On détermine les chiffres les uns après les autres depuis le plus grand avec _base = 10000
+	; Puis ainsi de suite avec _base = 1000, _base = 100 et enfin _base = 10
+	; Les uns, après les autres, on obtient alors les 5 chiffres qui compose le nombre sur 16 bits.
+ 	
+ 	.IF _base != 100
+ 	cmp #5*_base
+	bmi +
+		ldx #5
+		sec
+		sbc #5*_base
+		bra ++
+	+:
+ 		ldx #0
+	++:
+	.ELSE
+		ldx #0
+	.ENDIF
+	
+ 	-:
+	cmp #_base
+	bmi +
+		inx
+		sec
+		sbc #_base
+		bra -
+	+:
+	
+	
+.ENDM
+
+
+.MACRO LKS_printf8
+
+	;ldx #$5800 + (\1 + \2*32)
+	;stx MEM_TEMPFUNC
+	PCE_VDC MAWR,(\1 + \2*$20)
+	
+	jsr LKS_printf8_draw
+
+.ENDM
+
+LKS_printf8_draw:
+
+	
+	compute_digit_for_base8   100
+	stx MEM_TEMP + 0
+	compute_digit_for_base8    10
+	stx MEM_TEMP + 1
+	sta MEM_TEMP + 2
+	
+	st0 #VWR
+	lda MEM_TEMP + 0
+	clc
+	adc #'0'
+	sta.w VDC_DATAL
+	
+	lda #$42
+	sta.w VDC_DATAH
+	
+	lda MEM_TEMP + 1
+	clc
+	adc #'0'
+	sta.w VDC_DATAL
+	
+	lda #$42
+	sta.w VDC_DATAH
+	
+	lda MEM_TEMP + 2
+	clc
+	adc #'0'
+	sta.w VDC_DATAL
+	
+	lda #$42
+	sta.w VDC_DATAH
+	
+	rts
+	
+Text:
+	PCE_VDC MAWR,$3A0
+	PCE_VDC VWR,$4200 +'P'
+	PCE_VDC VWR,$4200 +'V'
+	PCE_VDC VWR,$4200 +':'
+	
+	
+	
+	lda hero+_pv
+	LKS_printf8,3,29
+	
+	
+	PCE_VDC MAWR,$3A0+$2*10
+	PCE_VDC VWR,$4200 +'S'
+	PCE_VDC VWR,$4200 +'C'
+	PCE_VDC VWR,$4200 +'O'
+	PCE_VDC VWR,$4200 +'R'
+	PCE_VDC VWR,$4200 +'E'
+	PCE_VDC VWR,$4200 +':'
+	
+	
+	
+	lda score
+	LKS_printf8,26,29
+	rts
+	
+Text_end:
+	PCE_VDC MAWR,$20*15+$C
+	PCE_VDC VWR,$4200 +'G'
+	PCE_VDC VWR,$4200 +'A'
+	PCE_VDC VWR,$4200 +'M'
+	PCE_VDC VWR,$4200 +'E'
+	PCE_VDC VWR,$4200 +' '
+	PCE_VDC VWR,$4200 +'0'
+	PCE_VDC VWR,$4200 +'V'
+	PCE_VDC VWR,$4200 +'E'
+	PCE_VDC VWR,$4200 +'R'
+	
+	
+	lda hero+_pv
+	LKS_printf8,3,29
+	rts
+	
+Sprite_VDC:
+
+  		PCE_VDC MAWR , $7F00
+  		st0 #VWR
+  		
+  		tia SPR_ARRAY,VDC_DATAL,$100
+  		
+  		rts
+
+
+	.include "hitbox.pcs"
+	.include "gameplay.pcs"
+
+	.include "draw.pcs"
+    .include "anim.pcs"
+	.include "joypad.pcs"
+	.include "load.pcs"
+	.include "interruption.pcs"
+	.include "init.pcs"
+	
+	
+Fouet_DATA2:
+	.dw $0360,$0081,$0360,$0081,$0360,$0081,$0362,$0081,$0362,$0081,$0402,$0402,$0402,$0402,$0402,$0402,$0402,$0402
+	.dw $0360,$0081,$0360,$0081,$0360,$0081,$0362,$0081,$0362,$0081,$0368,$1081,$0402,$0402,$0402,$0402,$0402,$0402
+	.dw $0360,$0081,$0360,$0081,$0360,$0081,$0362,$0081,$0362,$0081,$0368,$1081,$0368,$1081,$0402,$0402,$0402,$0402
+	.dw $0360,$0081,$0360,$0081,$0360,$0081,$0362,$0081,$0362,$0081,$0368,$1081,$0368,$1081,$036A,$1081,$0402,$0402
+	.dw $0360,$0081,$0360,$0081,$0362,$0081,$0362,$0081,$0368,$1081,$0368,$1081,$036A,$1081,$036A,$1081,$0402,$0402
+	.dw $0360,$0081,$0360,$0081,$0362,$0081,$0362,$0081,$0368,$1081,$0368,$1081,$036A,$1081,$036A,$1081,$0370,$1081
+	.dw $0360,$0081,$0360,$0081,$0362,$0081,$0362,$0081,$0368,$1081,$0368,$1081,$036A,$1081,$036A,$1081,$0370,$1081
+
+Fouet_DATA:
+	;fouet
+	.db $94,$94,$94,$94,$90,$00,$00,$00,$00
+	.db $8C,$92,$98,$9E,$A0,$FF,$FF,$FF,$FF
+	
+	;Attack
+	.db $80,$84,$88,$8C,$96,$A2,$00,$00,$00
+	.db $8A,$92,$9A,$A0,$A0,$90,$FF,$FF,$FF
+	
+	.db $78,$74,$6C,$6A,$6C,$72,$7C,$00,$00
+	.db $88,$84,$8A,$90,$98,$8C,$90,$FF,$FF
+	
+	.db $80,$78,$70,$68,$60,$5C,$62,$6C,$00
+	.db $80,$7C,$78,$7C,$82,$7C,$88,$90,$FF
+	
+	.db $98,$90,$84,$76,$68,$5C,$52,$4A,$00
+	.db $80,$78,$70,$6C,$60,$68,$70,$78,$FF
+	
+	
+	.db $A0,$AA,$B0,$B4,$AA,$9C,$8E,$80,$74
+	.db $88,$84,$80,$7A,$64,$60,$5D,$5B,$4A
+	
+	.db $A8,$A8+$A,$A8+$A*2,$A8+$A*3,$A8+$A*4,$A8+$A*5,$A8+$A*6,$A8+$A*7,$A8+$A*8
+	.db $8A,$8A,$8A,$8A,$7A,$7A,$7A,$7A,$6A
+    
+.org $1FF6
+.dw irq
+.dw vdc_int
+.dw timer
+.dw nmi
+.dw start
+
+
+
+
+.bank 1 slot 1
+.org $00
+
+
+	
+
+.MACRO MAP_DATA
+	.dw $A0+\1,$A1+\1,$A0+\2,$A1+\2,$A0+\3,$A1+\3,$A0+\4,$A1+\4,$A0+\5,$A1+\5,$A0+\6,$A1+\6,$A0+\7,$A1+\7,$A0+\8,$A1+\8
+
+.ENDM	
+
+.MACRO MAP_DATA16
+	.dw $A0+\1,$A1+\1,$A0+\2,$A1+\2,$A0+\3,$A1+\3,$A0+\4,$A1+\4,$A0+\5,$A1+\5,$A0+\6,$A1+\6,$A0+\7,$A1+\7,$A0+\8,$A1+\8
+	.dw $A0+\9,$A1+\9,$A0+\10,$A1+\10,$A0+\11,$A1+\11,$A0+\12,$A1+\12,$A0+\13,$A1+\13,$A0+\14,$A1+\14,$A0+\15,$A1+\15,$A0+\16,$A1+\16
+	
+	.dw $B0+\1,$B1+\1,$B0+\2,$B1+\2,$B0+\3,$B1+\3,$B0+\4,$B1+\4,$B0+\5,$B1+\5,$B0+\6,$B1+\6,$B0+\7,$B1+\7,$B0+\8,$B1+\8
+	.dw $B0+\9,$B1+\9,$B0+\10,$B1+\10,$B0+\11,$B1+\11,$B0+\12,$B1+\12,$B0+\13,$B1+\13,$B0+\14,$B1+\14,$B0+\15,$B1+\15,$B0+\16,$B1+\16
+
+.ENDM	
+map_tile:
+	MAP_DATA 0,0,0,0,0,0,0,0
+	
+	MAP_DATA16 $24,$26,$08,$0A,$10A0,$10A2,$10A4,$10A6,$2104,$2106,$10A0,$10A2,$10A4,$10A6,$2104,$2106
+	MAP_DATA16 $24,$26,$28,$2A,$10C0,$10C2,$10C4,$10C6,$2124,$2126,$10C0,$10C2,$10C4,$10C6,$2124,$2126
+	
+	MAP_DATA16 $24,$26,$0C,$0E,$10E0,$10E2,$10E4,$10E6,$3144,$3146,$10E0,$10E2,$10E4,$10E6,$3144,$3146
+	MAP_DATA16 $24,$26,$2C,$2E,$1088,$108A,$108C,$108E,$3164,$3166,$1088,$108A,$108C,$108E,$3164,$3166
+
+	MAP_DATA16 $24,$26,$40,$42,$10A8,$10AA,$10AC,$10AE,$3160,$3162,$10A8,$10AA,$10AC,$10AE,$3160,$3162
+	MAP_DATA16 $24,$26,$60,$62,$10C8,$10CA,$10CC,$10CE,$3168,$316A,$10C8,$10CA,$10CC,$10CE,$3168,$316A
+	
+	MAP_DATA16 $24,$26,$44,$46,$10A8,$10AA,$10AC,$10AE,$3164,$3166,$10A8,$10AA,$10AC,$10AE,$3164,$3166
+	MAP_DATA16 $24,$26,$64,$66,$10C8,$10CA,$10CC,$10CE,$3160,$3162,$10C8,$10CA,$10CC,$10CE,$3160,$3162
+	
+	
+	MAP_DATA16 $24,$26,$48,$48,$10A8,$10AA,$10AC,$10AE,$316C,$316E,$10A8,$10AA,$10AC,$10AE,$316C,$316E
+	MAP_DATA16 $24,$26,$48,$48,$10C8,$10CA,$10CC,$10CE,$1082,$1084,$10C8,$10CA,$10CC,$10CE,$1082,$1084
+	
+	MAP_DATA16 $04,$22,$04,$22,$0068,$006A,$006C,$006E,$3148,$314A,$0068,$006A,$006C,$006E,$3148,$314A
+	MAP_DATA16 $06,$20,$20,$20,$0006,$0020,$0020,$0020,$314C,$314E,$0006,$0020,$0020,$0020,$314C,$314E
+	
+	MAP_DATA16 $2108,$210A,$210C,$210E,$2108,$210A,$210C,$210E,$2108,$210A,$210C,$210E,$2108,$210A,$210C,$210E
+	MAP_DATA16 $2128,$212A,$212C,$212E,$2128,$212A,$212C,$212E,$2128,$212A,$212C,$212E,$2128,$212A,$212C,$212E
+
+	
+pallette_Hero:
+	.dw  $0020,$0002,$0050,$00db,$0124,$01b6,$00f2,$00a9,$0133,$0007,$0087,$0174,$008a,$0000,$00a0,$0117
+	
+
+
+
+.bank 2 slot 1
+.org $00
+
+font1:
+	.include "DATA/text.asm"
+	
+
+Hero1:
+	.include "DATA/C1.asm"
+	
+Hero4:
+	.include "DATA/C3.asm"
+	
+	
+.bank 3 slot 1
+.org $00
+
+
+
+tile1:
+	.include "DATA/tile1.asm"
+	
+tile4:
+	.include "DATA/tile4.asm"
+	
+.bank 4 slot 1
+.org $00
+
+tile2:
+	.include "DATA/tile2.asm"
+	
+tile3:
+	.include "DATA/tile3.asm"
+
+.bank 5 slot 1
+.org $00
+Hero2:
+	.include "DATA/C2.asm"
+	
+.bank 6 slot 1
+.org $00
+Hero3:
+	.include "DATA/C4.asm"
+
+.bank 7 slot 1
+.org $00
+Flame:
+	.include "DATA/flame.asm"
+	
+Ennemi1:
+	.include "DATA/ennemi1.asm"
+	
+Ennemi2:
+	.include "DATA/ennemi2.asm"

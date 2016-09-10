@@ -1,0 +1,563 @@
+
+
+Draw_Ennemi:
+
+
+
+	
+
+	lda ennemi1+_vx
+	and #$01
+	cmp #$01
+	beq +
+		lda ennemi1+_invin
+		cmp #1
+		beq +
+		subiw SPR_ARRAY+_x+$68,$1
+	+:
+	indw SPR_ARRAY+_x+$68,SPR_ARRAY+_x+$70
+	
+	
+	lda SPR_ARRAY+_x+$68
+	cmp #$00
+	bne +
+	lda SPR_ARRAY+_x+$68+1
+	cmp #$00
+	bne +
+		immw $0138,SPR_ARRAY+_x+$68
+		lda #2
+		sta ennemi1+_pv
+	+:
+	
+	
+	
+	
+	inc ennemi1+_vx
+	
+	
+	rts
+	
+	
+
+
+Draw_hero:
+
+
+	
+	indw SPR_ARRAY+_x,SPR_ARRAY+_x+$8
+	indw SPR_ARRAY+_tile,SPR_ARRAY+_tile+$8
+	indw SPR_ARRAY+_palFS,SPR_ARRAY+_palFS+$8
+	lda SPR_ARRAY+_palFS+$8+1
+	and #$09
+	sta SPR_ARRAY+_palFS+$8+1
+	
+	addiw SPR_ARRAY+_tile+$8,$8
+	
+	indw SPR_ARRAY+_y,SPR_ARRAY+_y+$8
+	addiw SPR_ARRAY+_y+$8,$20
+	
+	;-----
+	indw SPR_ARRAY+_x,SPR_ARRAY+_x+$10
+	indw SPR_ARRAY+_y,SPR_ARRAY+_y+$10
+	indw SPR_ARRAY+_tile,SPR_ARRAY+_tile+$10
+	indw SPR_ARRAY+_palFS,SPR_ARRAY+_palFS+$10
+	
+	addiw SPR_ARRAY+_tile+$10,$10
+	
+	
+	lda SPR_ARRAY+_palFS+$10+1
+	and #$18
+	sta SPR_ARRAY+_palFS+$10+1
+	
+	
+	;bras gauche/droite
+	cmp #$10
+	bne +
+		addiw SPR_ARRAY+_x+$10,$20
+		bra ++
+	+:
+		subiw SPR_ARRAY+_x+$10,$10
+	++:
+	
+	;bras
+	lda hero+_anim
+	cmp #2
+	beq +
+		immw $0,SPR_ARRAY+_x+$10
+	+:
+	lda hero+_animi
+	cmp #4
+	bpl +
+		immw $0,SPR_ARRAY+_x+$10
+	+:
+	
+	rts
+
+Fouet_anim:
+
+	
+	;--------
+	lda SPR_ARRAY+_palFS+1
+	and #$08
+	cmp #$08
+	bne +
+		jsr Fouet_anim2
+		rts
+	+:
+	
+	
+	
+	
+
+	immw $0000,SPR_ARRAY+_x+$60
+	immw $0000,SPR_ARRAY+_y+$60
+	
+	
+	lda hero+_anim
+	cmp #2
+	bne +
+		lda hero+_animi
+		cmp #4
+		bmi +
+			indw SPR_ARRAY+_x,SPR_ARRAY+_x+$60
+			indw SPR_ARRAY+_y,SPR_ARRAY+_y+$60
+	+:
+	clx
+	cly
+	
+	
+	lda hero+_anim
+	cmp #2
+	bne +
+	
+		
+		lda hero+_animi
+		cmp #0
+		bne ++
+			ldx #18*1
+			ldy #36*1
+		++:
+		cmp #1
+		bne ++
+			ldx #18*2
+			ldy #36*2
+		++:
+		cmp #2
+		bne ++
+			ldx #18*3
+			ldy #36*3
+		++:
+		
+		cmp #3
+		bne ++
+			ldx #18*4
+			ldy #36*4
+		++:
+		cmp #4
+		bne ++
+			ldx #18*5
+			ldy #36*5
+			
+			subiw SPR_ARRAY+_x+$60,$000C
+			subiw SPR_ARRAY+_y+$60,$0018
+			bra +
+		++:
+		
+		cmp #5
+		bne ++
+			ldx #18*6
+			ldy #36*6
+			
+			addiw SPR_ARRAY+_x+$60,$0078
+			addiw SPR_ARRAY+_y+$60,$000A
+		++:
+		
+	+:
+	
+	;Flame10
+	immw $0364,SPR_ARRAY+_tile+$60
+	immw $0081,SPR_ARRAY+_palFS+$60
+
+	
+	;Flame1
+	
+		addw SPR_ARRAY+_x,SPR_ARRAY+_x+$18,Fouet_DATA
+	
+	addw SPR_ARRAY+_y,SPR_ARRAY+_y+$18,Fouet_DATA+9
+	
+	indwy Fouet_DATA2+0,SPR_ARRAY+_tile+$18
+	indwy Fouet_DATA2+2,SPR_ARRAY+_palFS+$18
+	
+	
+	
+	;Flame2
+	addw SPR_ARRAY+_x,SPR_ARRAY+_x+$20,Fouet_DATA+1
+	addw SPR_ARRAY+_y,SPR_ARRAY+_y+$20,Fouet_DATA+10
+	
+	indwy Fouet_DATA2+4,SPR_ARRAY+_tile+$20
+	indwy Fouet_DATA2+6,SPR_ARRAY+_palFS+$20
+	
+	;Flame3
+	addw SPR_ARRAY+_x,SPR_ARRAY+_x+$28,Fouet_DATA+2
+	addw SPR_ARRAY+_y,SPR_ARRAY+_y+$28,Fouet_DATA+11
+	
+	indwy Fouet_DATA2+8,SPR_ARRAY+_tile+$28
+	indwy Fouet_DATA2+10,SPR_ARRAY+_palFS+$28
+	
+	;Flame4
+	addw SPR_ARRAY+_x,SPR_ARRAY+_x+$30,Fouet_DATA+3
+	addw SPR_ARRAY+_y,SPR_ARRAY+_y+$30,Fouet_DATA+12
+	
+	indwy Fouet_DATA2+12,SPR_ARRAY+_tile+$30
+	indwy Fouet_DATA2+14,SPR_ARRAY+_palFS+$30
+	
+	;Flame5
+	addw SPR_ARRAY+_x,SPR_ARRAY+_x+$38,Fouet_DATA+4
+	addw SPR_ARRAY+_y,SPR_ARRAY+_y+$38,Fouet_DATA+13
+	
+	indwy Fouet_DATA2+16,SPR_ARRAY+_tile+$38
+	indwy Fouet_DATA2+18,SPR_ARRAY+_palFS+$38
+	
+	;Flame6
+	addw SPR_ARRAY+_x,SPR_ARRAY+_x+$40,Fouet_DATA+5
+	addw SPR_ARRAY+_y,SPR_ARRAY+_y+$40,Fouet_DATA+14
+	
+	indwy Fouet_DATA2+20,SPR_ARRAY+_tile+$40
+	indwy Fouet_DATA2+22,SPR_ARRAY+_palFS+$40
+	
+	;Flame7
+	addw SPR_ARRAY+_x,SPR_ARRAY+_x+$48,Fouet_DATA+6
+	addw SPR_ARRAY+_y,SPR_ARRAY+_y+$48,Fouet_DATA+15
+	
+	indwy Fouet_DATA2+24,SPR_ARRAY+_tile+$48
+	indwy Fouet_DATA2+26,SPR_ARRAY+_palFS+$48
+	
+	;Flame8
+	addw SPR_ARRAY+_x,SPR_ARRAY+_x+$50,Fouet_DATA+7
+	addw SPR_ARRAY+_y,SPR_ARRAY+_y+$50,Fouet_DATA+16
+	
+	indwy Fouet_DATA2+28,SPR_ARRAY+_tile+$50
+	indwy Fouet_DATA2+30,SPR_ARRAY+_palFS+$50
+	
+	;Flame9
+	addw SPR_ARRAY+_x,SPR_ARRAY+_x+$58,Fouet_DATA+8
+	addw SPR_ARRAY+_y,SPR_ARRAY+_y+$58,Fouet_DATA+17
+	
+	indwy Fouet_DATA2+32,SPR_ARRAY+_tile+$58
+	indwy Fouet_DATA2+34,SPR_ARRAY+_palFS+$58
+	
+	;-----
+	subiw SPR_ARRAY+_x+$18,$80
+	subiw SPR_ARRAY+_y+$18,$80
+	
+	subiw SPR_ARRAY+_x+$20,$80
+	subiw SPR_ARRAY+_y+$20,$80
+	
+	subiw SPR_ARRAY+_x+$28,$80
+	subiw SPR_ARRAY+_y+$28,$80
+	
+	subiw SPR_ARRAY+_x+$30,$80
+	subiw SPR_ARRAY+_y+$30,$80
+	
+	subiw SPR_ARRAY+_x+$38,$80
+	subiw SPR_ARRAY+_y+$38,$80
+	
+	subiw SPR_ARRAY+_x+$40,$80
+	subiw SPR_ARRAY+_y+$40,$80
+	
+	subiw SPR_ARRAY+_x+$48,$80
+	subiw SPR_ARRAY+_y+$48,$80
+	
+	subiw SPR_ARRAY+_x+$50,$80
+	subiw SPR_ARRAY+_y+$50,$80
+	
+	subiw SPR_ARRAY+_x+$58,$80
+	subiw SPR_ARRAY+_y+$58,$80
+
+	rts
+
+Fouet_anim2:
+
+
+	
+	
+	
+	
+
+	immw $0000,SPR_ARRAY+_x+$60
+	immw $0000,SPR_ARRAY+_y+$60
+	
+
+	
+	
+	lda hero+_anim
+	cmp #2
+	bne +
+		lda hero+_animi
+		cmp #4
+		bmi +
+			indw SPR_ARRAY+_x,SPR_ARRAY+_x+$60
+			indw SPR_ARRAY+_y,SPR_ARRAY+_y+$60
+	+:
+	clx
+	cly
+
+	
+	lda hero+_anim
+	cmp #2
+	bne +
+	
+		
+		lda hero+_animi
+		cmp #0
+		bne ++
+			ldx #18*1
+			ldy #36*1
+		++:
+		cmp #1
+		bne ++
+			ldx #18*2
+			ldy #36*2
+		++:
+		cmp #2
+		bne ++
+			ldx #18*3
+			ldy #36*3
+		++:
+		
+		cmp #3
+		bne ++
+			ldx #18*4
+			ldy #36*4
+		++:
+		cmp #4
+		bne ++
+			ldx #18*5
+			ldy #36*5
+			
+			addiw SPR_ARRAY+_x+$60,$001B
+			subiw SPR_ARRAY+_y+$60,$0018
+			bra +
+		++:
+		
+		cmp #5
+		bne ++
+			ldx #18*6
+			ldy #36*6
+			
+			subiw SPR_ARRAY+_x+$60,$0069
+			addiw SPR_ARRAY+_y+$60,$000A
+		++:
+		
+	+:
+	
+	;Flame10
+	immw $0364,SPR_ARRAY+_tile+$60
+	immw $0081,SPR_ARRAY+_palFS+$60
+
+	
+	;Flame1
+	subw SPR_ARRAY+_x,SPR_ARRAY+_x+$18,Fouet_DATA
+	addw SPR_ARRAY+_y,SPR_ARRAY+_y+$18,Fouet_DATA+9
+	
+	indwy Fouet_DATA2+0,SPR_ARRAY+_tile+$18
+	indwy Fouet_DATA2+2,SPR_ARRAY+_palFS+$18
+	
+	
+	
+	;Flame2
+	subw SPR_ARRAY+_x,SPR_ARRAY+_x+$20,Fouet_DATA+1
+	addw SPR_ARRAY+_y,SPR_ARRAY+_y+$20,Fouet_DATA+10
+	
+	indwy Fouet_DATA2+4,SPR_ARRAY+_tile+$20
+	indwy Fouet_DATA2+6,SPR_ARRAY+_palFS+$20
+	
+	;Flame3
+	subw SPR_ARRAY+_x,SPR_ARRAY+_x+$28,Fouet_DATA+2
+	addw SPR_ARRAY+_y,SPR_ARRAY+_y+$28,Fouet_DATA+11
+	
+	indwy Fouet_DATA2+8,SPR_ARRAY+_tile+$28
+	indwy Fouet_DATA2+10,SPR_ARRAY+_palFS+$28
+	
+	;Flame4
+	subw SPR_ARRAY+_x,SPR_ARRAY+_x+$30,Fouet_DATA+3
+	addw SPR_ARRAY+_y,SPR_ARRAY+_y+$30,Fouet_DATA+12
+	
+	indwy Fouet_DATA2+12,SPR_ARRAY+_tile+$30
+	indwy Fouet_DATA2+14,SPR_ARRAY+_palFS+$30
+	
+	;Flame5
+	subw SPR_ARRAY+_x,SPR_ARRAY+_x+$38,Fouet_DATA+4
+	addw SPR_ARRAY+_y,SPR_ARRAY+_y+$38,Fouet_DATA+13
+	
+	indwy Fouet_DATA2+16,SPR_ARRAY+_tile+$38
+	indwy Fouet_DATA2+18,SPR_ARRAY+_palFS+$38
+	
+	;Flame6
+	subw SPR_ARRAY+_x,SPR_ARRAY+_x+$40,Fouet_DATA+5
+	addw SPR_ARRAY+_y,SPR_ARRAY+_y+$40,Fouet_DATA+14
+	
+	indwy Fouet_DATA2+20,SPR_ARRAY+_tile+$40
+	indwy Fouet_DATA2+22,SPR_ARRAY+_palFS+$40
+	
+	;Flame7
+	subw SPR_ARRAY+_x,SPR_ARRAY+_x+$48,Fouet_DATA+6
+	addw SPR_ARRAY+_y,SPR_ARRAY+_y+$48,Fouet_DATA+15
+	
+	indwy Fouet_DATA2+24,SPR_ARRAY+_tile+$48
+	indwy Fouet_DATA2+26,SPR_ARRAY+_palFS+$48
+	
+	;Flame8
+	subw SPR_ARRAY+_x,SPR_ARRAY+_x+$50,Fouet_DATA+7
+	addw SPR_ARRAY+_y,SPR_ARRAY+_y+$50,Fouet_DATA+16
+	
+	indwy Fouet_DATA2+28,SPR_ARRAY+_tile+$50
+	indwy Fouet_DATA2+30,SPR_ARRAY+_palFS+$50
+	
+	;Flame9
+	subw SPR_ARRAY+_x,SPR_ARRAY+_x+$58,Fouet_DATA+8
+	addw SPR_ARRAY+_y,SPR_ARRAY+_y+$58,Fouet_DATA+17
+	
+	indwy Fouet_DATA2+32,SPR_ARRAY+_tile+$58
+	indwy Fouet_DATA2+34,SPR_ARRAY+_palFS+$58
+	
+	;-----
+	subiw SPR_ARRAY+_x+$18,$70
+	subiw SPR_ARRAY+_y+$18,$80
+	
+	subiw SPR_ARRAY+_x+$20,$70
+	subiw SPR_ARRAY+_y+$20,$80
+	
+	subiw SPR_ARRAY+_x+$28,$70
+	subiw SPR_ARRAY+_y+$28,$80
+	
+	subiw SPR_ARRAY+_x+$30,$70
+	subiw SPR_ARRAY+_y+$30,$80
+	
+	subiw SPR_ARRAY+_x+$38,$70
+	subiw SPR_ARRAY+_y+$38,$80
+	
+	subiw SPR_ARRAY+_x+$40,$70
+	subiw SPR_ARRAY+_y+$40,$80
+	
+	subiw SPR_ARRAY+_x+$48,$70
+	subiw SPR_ARRAY+_y+$48,$80
+	
+	subiw SPR_ARRAY+_x+$50,$70
+	subiw SPR_ARRAY+_y+$50,$80
+	
+	subiw SPR_ARRAY+_x+$58,$70
+	subiw SPR_ARRAY+_y+$58,$80
+
+	rts
+	
+
+Draw_Ennemi2:
+
+	
+	inc ennemi2+_vy
+	lda ennemi2+_vy
+	and #$03
+	cmp #$00
+	bne +
+		rts
+	
+	+:
+	
+	lda ennemi2+_invin
+	cmp #1
+	bne +
+		rts
+	+:
+
+	ldx ennemi2+_vx
+	cpx #$00
+	bne +
+		lda SPR_ARRAY+_x+$78
+		cmp #$30
+		beq ++
+			addiw SPR_ARRAY+_x+$78,$1
+			bra +
+		++:
+		lda #1
+		sta ennemi2+_vx
+	+:
+	
+	
+	cpx #$01
+	bne +
+		lda SPR_ARRAY+_x+$78
+		cmp #$70
+		beq ++
+			addiw SPR_ARRAY+_x+$78,$1
+			addiw SPR_ARRAY+_y+$78,$1
+			bra +
+		++:
+		lda #2
+		sta ennemi2+_vx
+	+:
+	
+	cpx #$02
+	bne +
+		lda SPR_ARRAY+_x+$78
+		cmp #$80
+		beq ++
+			addiw SPR_ARRAY+_x+$78,$1
+			bra +
+		++:
+		lda #3
+		sta ennemi2+_vx
+	+:
+	
+	cpx #$03
+	bne +
+		lda SPR_ARRAY+_x+$78
+		cmp #$C0
+		beq ++
+			addiw SPR_ARRAY+_x+$78,$1
+			subiw SPR_ARRAY+_y+$78,$1
+			bra +
+		++:
+		lda #4
+		sta ennemi2+_vx
+	+:
+	
+	cpx #$04
+	bne +
+		lda SPR_ARRAY+_x+$78
+		cmp #$FF
+		beq ++
+			addiw SPR_ARRAY+_x+$78,$1
+			addiw SPR_ARRAY+_y+$78,$1
+			bra +
+		++:
+		lda #5
+		sta ennemi2+_vx
+	+:
+	
+	cpx #$05
+	bne +
+		lda SPR_ARRAY+_x+$78
+		cmp #$40
+		beq ++
+			addiw SPR_ARRAY+_x+$78,$1
+			bra +
+		++:
+		lda #0
+		sta ennemi2+_vx
+		
+		lda #1
+		sta ennemi2+_pv
+		
+		immw $0010,SPR_ARRAY+_x+$78
+		immw $0088+$20,SPR_ARRAY+_y+$78
+	+:
+	
+	
+	
+	
+	
+	
+	
+	rts
+	

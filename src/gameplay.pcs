@@ -1,0 +1,288 @@
+
+Gameplay:
+
+
+			
+	
+	
+	
+
+			
+	lda hero+_anim
+	cmp #2
+	beq +
+		cmp #3
+		beq +
+		stz hero+_anim
+	+:
+	
+	lda hero+_invin
+	cmp #0
+	beq +
+		lda #4
+		sta hero+_anim
+		jmp ++++
+	+:
+	
+	lda hero+_anim
+	cmp #0
+	beq ++
+	cmp #1
+	beq +
+	
+	
+	bra +
+	++:	
+	
+		lda LKS_STDCTRL+_UP
+		cmp #1
+		bne +
+			lda #3
+			sta hero+_anim
+	+:
+	
+	lda hero+_jump
+	cmp #0
+	beq ++
+		lda LKS_STDCTRL+_RIGHT
+		cmp #2
+		bne +
+			lda #31
+			sta hero+_animoff
+			addiw SPR_ARRAY+_x,$2
+		+:
+		
+		lda LKS_STDCTRL+_LEFT
+		cmp #2
+		bne +
+			subiw SPR_ARRAY+_x,$2
+			lda #31
+			sta hero+_animoff
+		+:
+		
+		
+	++:
+	
+	
+	
+	
+	lda hero+_anim
+	cmp #2
+	bpl ++
+		lda LKS_STDCTRL+_RIGHT
+		cmp #2
+		bne +
+			lda #1
+			sta hero+_anim
+			
+			
+			
+			addiw SPR_ARRAY+_x,$1
+			lda SPR_ARRAY+_palFS+1
+			and #$F7
+			sta SPR_ARRAY+_palFS+1
+		+:
+		
+		
+		lda LKS_STDCTRL+_LEFT
+		cmp #2
+		bne +
+			lda #1
+			sta hero+_anim
+			
+			
+			subiw SPR_ARRAY+_x,$1
+			lda SPR_ARRAY+_palFS+1
+			ora #$08
+			sta SPR_ARRAY+_palFS+1
+		+:
+	++:
+	
+	
+	lda LKS_STDCTRL+_B1
+	cmp #1
+	bne +
+		lda #2
+		sta hero+_anim
+			
+	+:
+	++++:
+	
+	lda hero+_anim
+	cmp #0
+	bne +
+		lda #3
+		sta hero+_animn
+		
+		stz hero+_animoff
+		
+		bra ++
+	+:
+	cmp #1
+	bne +
+		lda #8
+		sta hero+_animn
+		
+		lda #10
+		sta hero+_animoff
+		
+		
+		bra ++
+	+:
+	cmp #2
+	bne +
+		lda #6
+		sta hero+_animn
+		
+		lda #20
+		sta hero+_animoff
+		
+		
+		bra ++
+	+:
+	cmp #3
+	bne +
+		lda #1
+		sta hero+_animn
+		
+		
+		
+		
+		lda hero+_animoff
+		cmp #31
+		beq +++
+			lda #30
+			sta hero+_animoff
+		+++:
+		
+		ldx hero+_jump
+		cpx #0
+		bne +
+			inc hero+_jump
+			subiw SPR_ARRAY+_y,$8
+		
+		bra ++
+	+:
+	cmp #4
+	bne +
+		lda #1
+		sta hero+_animn
+		
+		lda #40
+		sta hero+_animoff
+		
+		bra ++
+	+:
+	
+	++:
+	
+	jsr Hero_Jump
+
+	rts
+	
+Hero_Jump:
+
+	ldx hero+_jump
+	cpx #0
+	bne +
+		rts
+	+:
+	
+	ldx hero+_jump
+	cpx #2
+	bpl +
+		
+		subiw SPR_ARRAY+_y,$8
+		inc hero+_jump
+		rts
+	+:
+	cpx #4
+	bpl +
+		
+		subiw SPR_ARRAY+_y,$6
+		inc hero+_jump
+		rts
+	+:
+	cpx #8
+	bpl +
+		
+		subiw SPR_ARRAY+_y,$4
+		inc hero+_jump
+		rts
+	+:
+	cpx #12
+	bpl +
+		
+		subiw SPR_ARRAY+_y,$2
+		inc hero+_jump
+		rts
+	+:
+	cpx #16
+	bpl +
+		
+		subiw SPR_ARRAY+_y,$1
+		inc hero+_jump
+		rts
+	+:
+	
+	cpx #20
+	bpl +
+		
+		addiw SPR_ARRAY+_y,$0
+		inc hero+_jump
+		rts
+	+:
+	
+	cpx #24
+	bpl +
+		
+		addiw SPR_ARRAY+_y,$1
+		inc hero+_jump
+		rts
+	+:
+	
+	cpx #28
+	bpl +
+		
+		addiw SPR_ARRAY+_y,$2
+		inc hero+_jump
+		rts
+	+:
+	
+	cpx #32
+	bpl +
+		
+		addiw SPR_ARRAY+_y,$4
+		inc hero+_jump
+		rts
+	+:
+	
+	cpx #34
+	bpl +
+		
+		addiw SPR_ARRAY+_y,$6
+		inc hero+_jump
+		rts
+	+:
+	
+	cpx #36
+	bpl +
+		
+		addiw SPR_ARRAY+_y,$8
+		inc hero+_jump
+		rts
+	+:
+	
+	lda hero+_anim
+	cmp #3
+	bne +
+		stz hero+_anim
+	+:
+	
+	
+	stz hero+_jump
+
+	rts
+	
+	
+	

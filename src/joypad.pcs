@@ -1,0 +1,84 @@
+
+
+.MACRO joypad_event
+	lda \3	; read joypad
+	bit #\1
+	bne +
+		stz LKS_STDCTRL + \2
+		bra ++
+	+:
+		lda LKS_STDCTRL + \2
+		cmp #$00
+		bne +
+			lda #01
+			sta LKS_STDCTRL + \2
+			bra ++
+		+:
+		
+		lda #02
+		sta LKS_STDCTRL + \2
+	++:
+.ENDM
+
+
+
+LKS_joypad:
+	
+	
+	joypad_event $01 $00 _MEM_JOYPAD2 ; B1
+	joypad_event $02 $01 _MEM_JOYPAD2 ; B2
+	joypad_event $04 $02 _MEM_JOYPAD2 ; SELECT
+	joypad_event $08 $03 _MEM_JOYPAD2 ; START
+	
+	joypad_event $01 $04 _MEM_JOYPAD1 ; UP
+	joypad_event $02 $05 _MEM_JOYPAD1 ; RIGHT
+	joypad_event $04 $06 _MEM_JOYPAD1 ; DOWN
+	joypad_event $08 $07 _MEM_JOYPAD1 ; LEFT
+	
+	
+	rts
+	
+	
+
+READ_IO:
+
+
+
+    pha
+	phx
+	
+	lda #$01
+	sta $1000
+     
+	lda #$03
+	sta $1000
+	
+	lda #$01
+	sta $1000
+
+	pha
+	pla
+	nop
+	nop
+
+	lda $1000
+	eor #$0f
+	sta _MEM_JOYPAD1
+
+
+
+	stz $1000
+	pha
+	pla
+	nop
+	nop
+	lda $1000
+	eor #$0f
+	sta _MEM_JOYPAD2
+      
+
+			
+	plx
+	pla   
+	 
+    rts 

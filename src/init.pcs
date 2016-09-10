@@ -1,0 +1,124 @@
+
+
+
+	
+	
+init_game:
+
+	immw $0080,SPR_ARRAY+_x
+	immw $00D8,SPR_ARRAY+_y
+	immw $0348,SPR_ARRAY+_tile
+	immw $1180,SPR_ARRAY+_palFS
+	
+	
+	immw $0080,SPR_ARRAY+_x+$18
+	immw $00F0,SPR_ARRAY+_y+$18
+	immw $0360,SPR_ARRAY+_tile+$18
+	immw $0081,SPR_ARRAY+_palFS+$18
+	
+	;Ennemi1
+	immw $0130,SPR_ARRAY+_x+$68
+	immw $00D8,SPR_ARRAY+_y+$68
+	
+	immw $0378,SPR_ARRAY+_tile+$68
+	immw $1182,SPR_ARRAY+_palFS+$68
+
+	immw $0100,SPR_ARRAY+_x+$70
+	immw $00F8,SPR_ARRAY+_y+$70
+	
+	immw $0378+8,SPR_ARRAY+_tile+$70
+	immw $0182,SPR_ARRAY+_palFS+$70
+	
+	;Ennemi2
+	immw $0020,SPR_ARRAY+_x+$78
+	immw $0088+$20,SPR_ARRAY+_y+$78
+	
+	immw $0388,SPR_ARRAY+_tile+$78
+	immw $1983,SPR_ARRAY+_palFS+$78
+
+	
+	
+	lda #2
+	sta ennemi1+_pv
+	
+	lda #1
+	sta ennemi2+_pv
+	
+	
+	lda #10
+	sta hero+_pv
+
+	rts
+	
+	
+
+	
+
+init_vdc:
+	
+	PCE_VDC MAWR , $0000
+	PCE_VDC MARR , $0000
+	
+	PCE_VDC MWR , $0000
+	PCE_VDC CR  , $0000
+	PCE_VDC RCR , $0000
+	PCE_VDC BXR , $00F0
+	PCE_VDC BYR , $0000
+	
+	PCE_VDC VSR , $0703
+	PCE_VDC VDR , $00EF
+	PCE_VDC VCR , $0003
+	
+	PCE_VDC DCR , $0010
+	PCE_VDC HPR , $0000
+	PCE_VDC HDR , $062b
+	
+	PCE_VDC SATB, $7F00
+
+	rts
+	
+clear_ram:
+
+	ldx #0
+	-:
+
+		stz $2000,x
+		;stz $2100,x
+		stz $2200,x
+		stz $2300,x
+		stz $2400,x
+		stz $2500,x
+		stz $2600,x
+		stz $2700,x
+		stz $2800,x
+		stz $2900,x
+		stz $2A00,x
+		stz $2B00,x
+		stz $2C00,x
+		stz $2D00,x
+		stz $2E00,x
+		stz $2F00,x
+		
+		stz $3000,x
+		stz $3100,x
+		stz $3200,x
+		stz $3300,x
+		stz $3400,x
+		stz $3500,x
+		stz $3600,x
+		stz $3700,x
+		stz $3800,x
+		stz $3900,x
+		stz $3A00,x
+		stz $3B00,x
+		stz $3C00,x
+		stz $3D00,x
+		stz $3E00,x
+		stz $3F00,x
+
+		inx
+		cpx #255
+	bne -
+
+	rts
+	

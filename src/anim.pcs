@@ -1,0 +1,176 @@
+
+Animation_Hero:
+	lda hero+_animold
+	cmp hero+_anim
+	beq +
+		lda hero+_anim
+		sta hero+_animold
+		
+		stz hero+_animi
+		stz hero+_animl
+	+:
+	
+	inc hero+_animl
+	lda hero+_animl
+	clc
+	adc hero+_animn
+	cmp #15
+	bne +
+		inc hero+_animi
+		stz hero+_animl
+	+:
+	
+	
+	lda hero+_animi
+	cmp hero+_animn
+	bne +
+		stz hero+_animi
+		
+		lda hero+_anim
+		cmp #2
+		bne +
+			stz hero+_anim
+	+:
+
+
+	rts
+	
+	
+Animation_ennemi1:
+
+	lda #6
+	sta ennemi1+_animn
+
+	lda ennemi1+_animold
+	cmp ennemi1+_anim
+	beq +
+		lda ennemi1+_anim
+		sta ennemi1+_animold
+		
+		stz ennemi1+_animi
+		stz ennemi1+_animl
+	+:
+	
+	inc ennemi1+_animl
+	lda ennemi1+_animl
+	cmp #10
+	bne +
+		inc ennemi1+_animi
+		stz ennemi1+_animl
+	+:
+	
+	
+	lda ennemi1+_animi
+	cmp ennemi1+_animn
+	bne +
+		stz ennemi1+_animi
+		
+		lda ennemi1+_anim
+		cmp #2
+		bne +
+			stz ennemi1+_anim
+	+:
+
+
+	rts
+	
+	
+
+Animation_ennemi2:
+
+	lda #4
+	sta ennemi2+_animn
+
+	lda ennemi2+_animold
+	cmp ennemi2+_anim
+	beq +
+		lda ennemi2+_anim
+		sta ennemi2+_animold
+		
+		stz ennemi2+_animi
+		stz ennemi2+_animl
+	+:
+	
+	inc ennemi2+_animl
+	lda ennemi2+_animl
+	cmp #10
+	bne +
+		inc ennemi2+_animi
+		stz ennemi2+_animl
+	+:
+	
+	
+	lda ennemi2+_animi
+	cmp ennemi2+_animn
+	bne +
+		stz ennemi2+_animi
+		
+		lda ennemi2+_anim
+		cmp #2
+		bne +
+			stz ennemi2+_anim
+	+:
+
+
+	rts
+
+Anim_Fouet:
+	
+
+	lda SPR_ARRAY+_palFS+$18+1
+	ora hero+_fanim1
+	sta SPR_ARRAY+_palFS+$18+1
+	
+	lda SPR_ARRAY+_palFS+$20+1
+	ora hero+_fanim2
+	sta SPR_ARRAY+_palFS+$20+1
+	
+	lda SPR_ARRAY+_palFS+$28+1
+	ora hero+_fanim1
+	sta SPR_ARRAY+_palFS+$28+1
+	
+	lda SPR_ARRAY+_palFS+$30+1
+	ora hero+_fanim2
+	sta SPR_ARRAY+_palFS+$30+1
+	
+	lda SPR_ARRAY+_palFS+$38+1
+	ora hero+_fanim1
+	sta SPR_ARRAY+_palFS+$38+1
+	
+	lda SPR_ARRAY+_palFS+$40+1
+	ora hero+_fanim2
+	sta SPR_ARRAY+_palFS+$40+1
+	
+	lda SPR_ARRAY+_palFS+$48+1
+	ora hero+_fanim1
+	sta SPR_ARRAY+_palFS+$48+1
+	
+	lda SPR_ARRAY+_palFS+$50+1
+	ora hero+_fanim2
+	sta SPR_ARRAY+_palFS+$50+1
+	
+	lda SPR_ARRAY+_palFS+$58+1
+	ora hero+_fanim1
+	sta SPR_ARRAY+_palFS+$58+1
+
+	
+	inc hero+_faniml
+	lda hero+_faniml
+	cmp #5
+	bne +
+		lda #$08
+		sta hero+_fanim1
+		stz hero+_fanim2
+	+:
+	
+	cmp #10
+	bne +
+		lda #$08
+		sta hero+_fanim2
+		stz hero+_fanim1
+		stz hero+_faniml
+	+:
+
+
+	rts
+	

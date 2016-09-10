@@ -1,0 +1,155 @@
+
+
+  
+load_pal:
+  		    
+		lda #:pallette_tile1    
+		tam #MPR2                  
+
+
+		PCE_VCE_ADDR $0000
+		  
+		tia pallette_tile1+MPR2ADDR,$404,32
+		
+		
+		
+		lda #:pallette_tile2    
+		tam #MPR2                  
+
+		  
+		tia pallette_tile2+MPR2ADDR,$404,32
+		tia pallette_tile3+MPR2ADDR,$404,32
+		
+		lda #:pallette_tile4   
+		tam #MPR2                  
+
+		  
+		tia pallette_tile4+MPR2ADDR,$404,32
+		
+		lda #:pallette_text  
+		tam #MPR2    
+		tia pallette_text+MPR2ADDR,$404,32
+		
+
+		PCE_VCE_ADDR $0100
+
+		lda #:pallette_C1
+		tam #MPR2
+
+		tia pallette_C1+MPR2ADDR,$404,32
+		
+		lda #:pallette_flame
+		tam #MPR2
+
+		tia pallette_flame+MPR2ADDR,$404,$20
+		
+		lda #:pallette_ennemi1
+		tam #MPR2
+
+		tia pallette_ennemi1+MPR2ADDR,$404,$20
+		
+		lda #:pallette_ennemi2
+		tam #MPR2
+
+		tia pallette_ennemi2+MPR2ADDR,$404,$20
+		
+		
+		
+		PCE_VCE_ADDR $0000
+		PCE_VCE_DATA $0000
+		
+	rts
+
+
+load_sprites	
+		lda #:Hero1
+		tam #MPR3
+		
+		PCE_VDC MAWR , $6900
+		st0 #VWR
+		
+		
+		tia Hero1+MPR3ADDR,VWR,$100
+		
+		tia Hero1+MPR3ADDR+$400,VWR,$100
+		tia Hero1+MPR3ADDR+$800,VWR,$100
+		
+		
+		PCE_VDC MAWR , $6C00
+		st0 #VWR
+		
+		lda #:Flame
+		tam #MPR3
+		tia Flame+MPR3ADDR,VWR,$100
+		tia Flame+MPR3ADDR+$700,VWR,$100
+		
+		tia Flame+MPR3ADDR+$100,VWR,$100
+		tia Flame+MPR3ADDR+$380,VWR,$100
+		
+		tia Flame+MPR3ADDR+$200,VWR,$100
+		tia Flame+MPR3ADDR+$480,VWR,$100
+
+		;tile1
+		lda #:tile1
+		tam #MPR3
+		
+		PCE_VDC VDCREG_MAWR,$0A00
+
+		st0 #VDCREG_VRWD
+
+		tia tile1+MPR3ADDR,VWR,$1000
+		
+		;tile2
+		lda #:tile2
+		tam #MPR3
+		
+		PCE_VDC VDCREG_MAWR,$1200
+
+		st0 #VDCREG_VRWD
+
+		tia tile2+MPR3ADDR,VWR,$1000
+		
+		;tile3
+		lda #:tile3
+		tam #MPR3
+		
+		PCE_VDC VDCREG_MAWR,$1A00
+
+		st0 #VDCREG_VRWD
+
+		tia tile3+MPR3ADDR,VWR,$800
+		
+		;tile4
+		lda #:tile4
+		tam #MPR3
+		
+		PCE_VDC VDCREG_MAWR,$1E00
+
+		st0 #VDCREG_VRWD
+
+		tia tile4+MPR3ADDR,VWR,$800
+		
+		;font
+		lda #:font1
+		tam #MPR3
+		
+		PCE_VDC VDCREG_MAWR,$2200
+
+		st0 #VDCREG_VRWD
+
+		tia font1+MPR3ADDR,VWR,$800
+		
+		;map tile
+		lda #:map_tile
+		tam #MPR3
+		
+		PCE_VDC VDCREG_MAWR,$0010
+
+		st0 #VDCREG_VRWD
+
+		tia map_tile+MPR3ADDR,VWR,$720
+		
+		
+		
+	rts
+

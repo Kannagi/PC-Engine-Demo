@@ -1,0 +1,651 @@
+
+Hitbox_HE:
+
+	immw $0348,SPR_ARRAY+_tile
+	
+	jsr hero_degat
+	
+
+	
+	lda SPR_ARRAY+_x
+	sec
+	sbc #$10
+	sta MEM_TEMP
+	lda SPR_ARRAY+_x+1
+	sbc #$0
+	sta MEM_TEMP+1
+
+	cmpwbmi MEM_TEMP,SPR_ARRAY+_x+$68
+		bra +++++
+	+:
+	
+	lda SPR_ARRAY+_x
+	clc
+	adc #$18
+	sta MEM_TEMP
+	lda SPR_ARRAY+_x+1
+	adc #$0
+	sta MEM_TEMP+1
+
+	cmpwbpl MEM_TEMP,SPR_ARRAY+_x+$68
+		bra +++++
+	+:
+	
+
+	
+	lda SPR_ARRAY+_y
+	cmp SPR_ARRAY+_y+$68
+	bpl +
+		bra +++++
+	+:
+	
+	
+	lda #1
+	sta hero+_invin
+	
+	rts
+	
+	+++++:
+	
+	jsr Hitbox_HE2
+	
+	rts
+	
+Hitbox_HE2:
+
+	
+
+	
+	lda SPR_ARRAY+_x
+	sec
+	sbc #$10
+	sta MEM_TEMP
+	lda SPR_ARRAY+_x+1
+	sbc #$0
+	sta MEM_TEMP+1
+
+	cmpwbmi MEM_TEMP,SPR_ARRAY+_x+$78
+		rts
+	+:
+	
+	lda SPR_ARRAY+_x
+	clc
+	adc #$10
+	sta MEM_TEMP
+	lda SPR_ARRAY+_x+1
+	adc #$0
+	sta MEM_TEMP+1
+
+	cmpwbpl MEM_TEMP,SPR_ARRAY+_x+$78
+		rts
+	+:
+	
+
+	
+	lda SPR_ARRAY+_y
+	adc #8
+	cmp SPR_ARRAY+_y+$78
+	bpl +
+		rts
+	+:
+	
+	
+	lda SPR_ARRAY+_y
+	sbc #$10
+	cmp SPR_ARRAY+_y+$78
+	bmi +
+		rts
+	+:
+	
+	
+	
+
+	
+	lda #1
+	sta hero+_invin
+	
+	
+	
+	rts
+
+	
+Hitbox_EF:
+
+
+
+	immw $0378,SPR_ARRAY+_tile+$68
+	immw $0380,SPR_ARRAY+_tile+$70
+	
+	
+	
+	
+	
+	
+	jsr Ennemi1_degat
+	
+	lda hero+_anim
+	cmp #2
+	bne +
+	
+		
+		lda hero+_animi
+		cmp #5
+		beq ++
+		
+		rts
+		
+	+:
+		rts
+	++:
+	
+	
+	lda SPR_ARRAY+_palFS+1
+	and #$08
+	cmp #$08
+	beq +
+		
+		jsr Efface1
+		rts
+	+:
+
+	
+	
+	
+	lda SPR_ARRAY+_x
+	sec
+	sbc #$7C
+	sta MEM_TEMP
+	lda SPR_ARRAY+_x+1
+	sbc #$0
+	sta MEM_TEMP+1
+
+	cmpwbmi MEM_TEMP,SPR_ARRAY+_x+$68
+		rts
+	+:
+	
+	
+	
+	lda SPR_ARRAY+_x
+	sec
+	sbc #$8
+	sta MEM_TEMP
+	lda SPR_ARRAY+_x+1
+	sbc #$0
+	sta MEM_TEMP+1
+
+	cmpwbpl MEM_TEMP,SPR_ARRAY+_x+$68
+		rts
+	+:
+	
+
+	lda SPR_ARRAY+_y
+	cmp SPR_ARRAY+_y+$68
+	bpl +
+		rts
+	+:
+	
+	
+	lda #1
+	sta ennemi1+_invin
+	
+	rts
+	
+Efface1:
+
+	lda SPR_ARRAY+_x
+	clc
+	adc #$8
+	sta MEM_TEMP
+	lda SPR_ARRAY+_x+1
+	adc #$0
+	sta MEM_TEMP+1
+
+	cmpwbmi MEM_TEMP,SPR_ARRAY+_x+$68
+		rts
+	+:
+	
+	lda SPR_ARRAY+_x
+	clc
+	adc #$80
+	sta MEM_TEMP
+	lda SPR_ARRAY+_x+1
+	adc #$0
+	sta MEM_TEMP+1
+
+	cmpwbpl MEM_TEMP,SPR_ARRAY+_x+$68
+		rts
+	+:
+
+	lda SPR_ARRAY+_y
+	cmp SPR_ARRAY+_y+$68
+	bpl +
+		rts
+	+:
+	
+
+	lda #1
+	sta ennemi1+_invin
+
+	
+
+
+	rts
+	
+Ennemi1_degat:
+
+	lda ennemi1+_invin
+	cmp #1
+	beq +
+		rts
+	+:
+	
+	lda ennemi1+_invint
+	cmp #1
+	bne +
+		dec ennemi1+_pv
+	+:
+	
+	lda SPR_ARRAY+_palFS+1
+	and #$08
+	cmp #$08
+	beq +++
+	
+	lda ennemi1+_invint
+	cmp #$8
+	bpl +
+		addiw SPR_ARRAY+_x+$68,$4
+		bra ++
+	+:
+	cmp #$10
+	bpl +
+		addiw SPR_ARRAY+_x+$68,$2
+		bra ++
+	+:
+	cmp #$24
+	bpl +
+		addiw SPR_ARRAY+_x+$68,$1
+		bra ++
+	+:
+	
+	
+	+++:
+	
+	lda ennemi1+_invint
+	cmp #$8
+	bpl +
+		subiw SPR_ARRAY+_x+$68,$4
+		bra ++
+	+:
+	cmp #$10
+	bpl +
+		subiw SPR_ARRAY+_x+$68,$2
+		bra ++
+	+:
+	cmp #$24
+	bpl +
+		subiw SPR_ARRAY+_x+$68,$1
+		bra ++
+	+:
+	
+	++:
+	
+	inc ennemi1+_invint
+	lda ennemi1+_invint
+	and #$01
+	cmp #$01
+	beq +
+		lda #$40
+		sta SPR_ARRAY+_tile+$68
+		sta SPR_ARRAY+_tile+1+$68
+		sta SPR_ARRAY+_tile+$68+$8
+		sta SPR_ARRAY+_tile+1+$68+$8
+	+:
+	
+	
+	lda ennemi1+_invint
+	cmp #100
+	bne +
+		stz ennemi1+_invint
+		stz ennemi1+_invin
+		
+		
+		lda ennemi1+_pv
+		cmp #0
+		bne ++
+			lda #2
+			sta ennemi1+_pv
+			
+			inc score
+			
+			immw $0138,SPR_ARRAY+_x+$68
+		++:
+	+:
+	
+	
+	
+	rts
+	
+	
+
+hero_degat:
+
+	lda hero+_invin
+	cmp #1
+	beq +
+		rts
+	+:
+	
+	lda hero+_invint
+	cmp #1
+	bne +
+		dec hero+_pv
+	+:
+	
+	lda SPR_ARRAY+_palFS+1
+	and #$08
+	cmp #$08
+	beq +++
+	
+	lda hero+_invint
+	cmp #$8
+	bpl +
+		subiw SPR_ARRAY+_x,$4
+		bra ++
+	+:
+	cmp #$10
+	bpl +
+		subiw SPR_ARRAY+_x,$2
+		bra ++
+	+:
+	cmp #$24
+	bpl +
+		subiw SPR_ARRAY+_x,$1
+		bra ++
+	+:
+	
+	
+	+++:
+	
+	lda hero+_invint
+	cmp #$8
+	bpl +
+		addiw SPR_ARRAY+_x,$4
+		bra ++
+	+:
+	cmp #$10
+	bpl +
+		addiw SPR_ARRAY+_x,$2
+		bra ++
+	+:
+	cmp #$24
+	bpl +
+		addiw SPR_ARRAY+_x,$1
+		bra ++
+	+:
+	
+	++:
+	
+	inc hero+_invint
+	lda hero+_invint
+	and #$01
+	cmp #$01
+	beq +
+		lda #$40
+		sta SPR_ARRAY+_tile
+		sta SPR_ARRAY+_tile+1
+		
+		sta SPR_ARRAY+_tile+$10
+		sta SPR_ARRAY+_tile+1+$10
+	+:
+	
+	
+	lda hero+_invint
+	cmp #40
+	bne +
+		stz hero+_invint
+		stz hero+_invin
+		
+		
+		lda hero+_pv
+		cmp #0
+		bne ++
+			;lda #2
+			;sta hero+_pv
+			
+			;immw $0138,SPR_ARRAY+_x+$68
+		++:
+	+:
+	
+	
+	
+	rts
+	
+;---------------------------------------------
+ennemi2_degat:
+
+	lda ennemi2+_invin
+	cmp #1
+	beq +
+		rts
+	+:
+	
+	lda ennemi2+_invint
+	cmp #1
+	bne +
+		dec ennemi2+_pv
+	+:
+	
+	lda SPR_ARRAY+_palFS+1
+	and #$08
+	cmp #$08
+	beq +++
+	
+	lda ennemi2+_invint
+	cmp #$8
+	bpl +
+		addiw SPR_ARRAY+_x+$78,$4
+		bra ++
+	+:
+	cmp #$10
+	bpl +
+		addiw SPR_ARRAY+_x+$78,$2
+		bra ++
+	+:
+	cmp #$24
+	bpl +
+		addiw SPR_ARRAY+_x+$78,$1
+		bra ++
+	+:
+	
+	
+	+++:
+	
+	lda ennemi2+_invint
+	cmp #$8
+	bpl +
+		subiw SPR_ARRAY+_x+$78,$4
+		bra ++
+	+:
+	cmp #$10
+	bpl +
+		subiw SPR_ARRAY+_x+$78,$2
+		bra ++
+	+:
+	cmp #$24
+	bpl +
+		subiw SPR_ARRAY+_x+$78,$1
+		bra ++
+	+:
+	
+	++:
+	
+	inc ennemi2+_invint
+	lda ennemi2+_invint
+	and #$01
+	cmp #$01
+	beq +
+		lda #$40
+		sta SPR_ARRAY+_tile+$78
+		sta SPR_ARRAY+_tile+1+$78
+	+:
+	
+	
+	lda ennemi2+_invint
+	cmp #100
+	bne +
+		stz ennemi2+_invint
+		stz ennemi2+_invin
+		
+		
+		lda ennemi2+_pv
+		cmp #0
+		bne ++
+			lda #1
+			sta ennemi2+_pv
+			stz ennemi2+_vx
+			
+			inc score
+			inc score
+			
+			immw $0010,SPR_ARRAY+_x+$78
+			immw $0088+$20,SPR_ARRAY+_y+$78
+		++:
+	+:
+	
+	
+	
+	rts
+	
+
+Hitbox_EF2:
+
+
+
+	immw $0388,SPR_ARRAY+_tile+$78
+	
+	
+	jsr ennemi2_degat
+	
+	lda hero+_anim
+	cmp #2
+	bne +
+	
+		
+		lda hero+_animi
+		cmp #5
+		beq ++
+		
+		rts
+		
+	+:
+		rts
+	++:
+	
+	
+	lda SPR_ARRAY+_palFS+1
+	and #$08
+	cmp #$08
+	beq +
+		
+		jsr Efface2
+		rts
+	+:
+
+	
+	
+	
+	lda SPR_ARRAY+_x
+	sec
+	sbc #$7C
+	sta MEM_TEMP
+	lda SPR_ARRAY+_x+1
+	sbc #$0
+	sta MEM_TEMP+1
+
+	cmpwbmi MEM_TEMP,SPR_ARRAY+_x+$78
+		rts
+	+:
+	
+	
+	
+	lda SPR_ARRAY+_x
+	sec
+	sbc #$8
+	sta MEM_TEMP
+	lda SPR_ARRAY+_x+1
+	sbc #$0
+	sta MEM_TEMP+1
+
+	cmpwbpl MEM_TEMP,SPR_ARRAY+_x+$78
+		rts
+	+:
+	
+
+	lda SPR_ARRAY+_y
+	adc #8
+	cmp SPR_ARRAY+_y+$78
+	bpl +
+		rts
+	+:
+	
+	lda SPR_ARRAY+_y
+	sbc #$28
+	cmp SPR_ARRAY+_y+$78
+	bmi +
+		rts
+	+:
+	
+	
+	lda #1
+	sta ennemi2+_invin
+	
+	rts
+	
+Efface2:
+
+	lda SPR_ARRAY+_x
+	clc
+	adc #$8
+	sta MEM_TEMP
+	lda SPR_ARRAY+_x+1
+	adc #$0
+	sta MEM_TEMP+1
+
+	cmpwbmi MEM_TEMP,SPR_ARRAY+_x+$78
+		rts
+	+:
+	
+	lda SPR_ARRAY+_x
+	clc
+	adc #$80
+	sta MEM_TEMP
+	lda SPR_ARRAY+_x+1
+	adc #$0
+	sta MEM_TEMP+1
+
+	cmpwbpl MEM_TEMP,SPR_ARRAY+_x+$78
+		rts
+	+:
+
+	lda SPR_ARRAY+_y
+	adc #8
+	cmp SPR_ARRAY+_y+$78
+	bpl +
+		rts
+	+:
+	
+	lda SPR_ARRAY+_y
+	sbc #$28
+	cmp SPR_ARRAY+_y+$78
+	bmi +
+		rts
+	+:
+	
+
+	lda #1
+	sta ennemi2+_invin
+
+	
+
+
+	rts

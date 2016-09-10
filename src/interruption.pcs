@@ -1,0 +1,329 @@
+
+wait_vblank:
+		pha
+		lda #$01
+		sta _vblank
+		-:
+			lda _vblank
+		bne -
+		pla
+	
+	rts
+	
+Ennemi_anim:
+	
+	
+	lda ennemi1+_invin
+	cmp #1
+	bne +
+		rts
+	+:
+	
+	lda #:Ennemi1
+	tam #MPR3
+
+	PCE_VDC MAWR , $6F00
+	st0 #VWR
+
+	lda ennemi1+_animi
+	;clc
+	;adc ennemi1+_animoff
+	tax
+	cpx #0
+	bne +
+		tia Ennemi1+MPR3ADDR+$600*0,VWR,$100
+		tia Ennemi1+MPR3ADDR+$600*1,VWR,$100
+		tia Ennemi1+MPR3ADDR+$600*2,VWR,$100
+	+:
+	cpx #1
+	bne +
+		tia Ennemi1+MPR3ADDR+$100*1+$600*0,VWR,$100
+		tia Ennemi1+MPR3ADDR+$100*1+$600*1,VWR,$100
+		tia Ennemi1+MPR3ADDR+$100*1+$600*2,VWR,$100
+	+:
+	cpx #2
+	bne +
+		tia Ennemi1+MPR3ADDR+$100*2+$600*0,VWR,$100
+		tia Ennemi1+MPR3ADDR+$100*2+$600*1,VWR,$100
+		tia Ennemi1+MPR3ADDR+$100*2+$600*2,VWR,$100
+	+:
+	cpx #3
+	bne +
+		tia Ennemi1+MPR3ADDR+$100*3+$600*0,VWR,$100
+		tia Ennemi1+MPR3ADDR+$100*3+$600*1,VWR,$100
+		tia Ennemi1+MPR3ADDR+$100*3+$600*2,VWR,$100
+	+:
+	cpx #4
+	bne +
+		tia Ennemi1+MPR3ADDR+$100*4+$600*0,VWR,$100
+		tia Ennemi1+MPR3ADDR+$100*4+$600*1,VWR,$100
+		tia Ennemi1+MPR3ADDR+$100*4+$600*2,VWR,$100
+	+:
+	cpx #5
+	bne +
+		tia Ennemi1+MPR3ADDR+$100*5+$600*0,VWR,$100
+		tia Ennemi1+MPR3ADDR+$100*5+$600*1,VWR,$100
+		tia Ennemi1+MPR3ADDR+$100*5+$600*2,VWR,$100
+	+:
+
+	rts
+	
+	
+
+Ennemi2_anim:
+	
+	
+	lda ennemi2+_invin
+	cmp #1
+	bne +
+		rts
+	+:
+	
+	lda #:Ennemi2
+	tam #MPR3
+
+	PCE_VDC MAWR , $7100
+	st0 #VWR
+
+	lda ennemi2+_animi
+	tax
+	cpx #0
+	bne +
+		tia Ennemi2+MPR3ADDR+$300*0,VWR,$100
+		tia Ennemi2+MPR3ADDR+$300*1,VWR,$100
+	+:
+	cpx #1
+	bne +
+		tia Ennemi2+MPR3ADDR+$100*1+$300*0,VWR,$100
+		tia Ennemi2+MPR3ADDR+$100*1+$300*1,VWR,$100
+	+:
+	cpx #2
+	bne +
+		tia Ennemi2+MPR3ADDR+$100*2+$300*0,VWR,$100
+		tia Ennemi2+MPR3ADDR+$100*2+$300*1,VWR,$100
+	+:
+	cpx #3
+	bne +
+		tia Ennemi2+MPR3ADDR+$100*1+$300*0,VWR,$100
+		tia Ennemi2+MPR3ADDR+$100*1+$300*1,VWR,$100
+	+:
+
+
+	rts
+	
+Hero_anim:
+
+	lda #:Hero1
+	tam #MPR3
+	
+	PCE_VDC MAWR , $6900
+	st0 #VWR
+
+	lda hero+_animi
+	clc
+	adc hero+_animoff
+	tax
+	cpx #0
+	bne +
+		tia Hero1+MPR3ADDR,VWR,$100
+		tia Hero1+MPR3ADDR+$400,VWR,$100
+		tia Hero1+MPR3ADDR+$800,VWR,$100
+		rts
+	+:
+	cpx #1
+	bne +
+		tia Hero1+MPR3ADDR+$100,VWR,$100
+		tia Hero1+MPR3ADDR+$500,VWR,$100
+		tia Hero1+MPR3ADDR+$900,VWR,$100
+		rts
+	+:
+	cpx #2
+	bne +
+		tia Hero1+MPR3ADDR+$200,VWR,$100
+		tia Hero1+MPR3ADDR+$600,VWR,$100
+		tia Hero1+MPR3ADDR+$A00,VWR,$100
+		rts
+	+:
+	cpx #40
+	bne +
+		tia Hero1+MPR3ADDR+$300,VWR,$100
+		tia Hero1+MPR3ADDR+$700,VWR,$100
+		tia Hero1+MPR3ADDR+$B00,VWR,$100
+		rts
+	+:		
+	
+	
+	lda #:Hero2
+	tam #MPR3
+	
+
+	cpx #10
+	bne +
+		tia Hero2+MPR3ADDR,VWR,$100
+		tia Hero2+MPR3ADDR+$800,VWR,$100
+		tia Hero2+MPR3ADDR+$1000,VWR,$100
+		rts
+	+:
+	
+	cpx #11
+	bne +
+		tia Hero2+MPR3ADDR+$100,VWR,$100
+		tia Hero2+MPR3ADDR+$800+$100,VWR,$100
+		tia Hero2+MPR3ADDR+$1000+$100,VWR,$100
+		rts
+	+:
+	
+	cpx #12
+	bne +
+		tia Hero2+MPR3ADDR+$100*2,VWR,$100
+		tia Hero2+MPR3ADDR+$800+$100*2,VWR,$100
+		tia Hero2+MPR3ADDR+$1000+$100*2,VWR,$100
+		rts
+	+:
+	cpx #13
+	bne +
+		tia Hero2+MPR3ADDR+$100*3,VWR,$100
+		tia Hero2+MPR3ADDR+$800+$100*3,VWR,$100
+		tia Hero2+MPR3ADDR+$1000+$100*3,VWR,$100
+		rts
+	+:
+	cpx #14
+	bne +
+		tia Hero2+MPR3ADDR+$100*4,VWR,$100
+		tia Hero2+MPR3ADDR+$800+$100*4,VWR,$100
+		tia Hero2+MPR3ADDR+$1000+$100*4,VWR,$100
+		rts
+	+:
+	cpx #15
+	bne +
+		tia Hero2+MPR3ADDR+$100*5,VWR,$100
+		tia Hero2+MPR3ADDR+$800+$100*5,VWR,$100
+		tia Hero2+MPR3ADDR+$1000+$100*5,VWR,$100
+		rts
+	+:
+	cpx #16
+	bne +
+		tia Hero2+MPR3ADDR+$100*6,VWR,$100
+		tia Hero2+MPR3ADDR+$800+$100*6,VWR,$100
+		tia Hero2+MPR3ADDR+$1000+$100*6,VWR,$100
+		rts
+	+:
+	cpx #17
+	bne +
+		tia Hero2+MPR3ADDR+$100*7,VWR,$100
+		tia Hero2+MPR3ADDR+$800+$100*7,VWR,$100
+		tia Hero2+MPR3ADDR+$1000+$100*7,VWR,$100
+		rts
+	+:
+	
+	lda #:Hero3
+	tam #MPR3
+	
+	cpx #20
+	bne +
+		tia Hero3+MPR3ADDR+$100*0,VWR,$100
+		tia Hero3+MPR3ADDR+$700+$100*0,VWR,$100
+		tia Hero3+MPR3ADDR+$E00+$100*0,VWR,$100
+		rts
+	+:
+	cpx #21
+	bne +
+		tia Hero3+MPR3ADDR+$100*1,VWR,$100
+		tia Hero3+MPR3ADDR+$700+$100*1,VWR,$100
+		tia Hero3+MPR3ADDR+$E00+$100*1,VWR,$100
+		rts
+	+:
+	cpx #22
+	bne +
+		tia Hero3+MPR3ADDR+$100*2,VWR,$100
+		tia Hero3+MPR3ADDR+$700+$100*2,VWR,$100
+		tia Hero3+MPR3ADDR+$E00+$100*2,VWR,$100
+		rts
+	+:
+	cpx #23
+	bne +
+		tia Hero3+MPR3ADDR+$100*3,VWR,$100
+		tia Hero3+MPR3ADDR+$700+$100*3,VWR,$100
+		tia Hero3+MPR3ADDR+$E00+$100*3,VWR,$100
+		rts
+	+:
+	cpx #24
+	bne +
+		tia Hero3+MPR3ADDR+$100*4,VWR,$100
+		tia Hero3+MPR3ADDR+$700+$100*4,VWR,$100
+		tia Hero3+MPR3ADDR+$E00+$100*4,VWR,$100
+		
+	
+		PCE_VDC MAWR , $6900+$180+$80
+		st0 #VWR
+		tia Hero3+MPR3ADDR+$100+$100*4,VWR,$100
+		tia Hero3+MPR3ADDR+$800+$100*4,VWR,$80
+		
+
+		rts
+	+:
+	cpx #25
+	bne +
+		tia Hero3+MPR3ADDR+$80+$100*5,VWR,$100
+		tia Hero3+MPR3ADDR+$700+$80+$100*5,VWR,$100
+		tia Hero3+MPR3ADDR+$E00+$80+$100*5,VWR,$100
+		
+		PCE_VDC MAWR , $6900+$180+$80
+		st0 #VWR
+		tia Hero3+MPR3ADDR+$180+$100*5,VWR,$100
+		tia Hero3+MPR3ADDR+$880+$100*5,VWR,$80
+		
+		rts
+	+:
+	
+	lda #:Hero4
+	tam #MPR3
+	cpx #30
+	bne +
+		tia Hero4+MPR3ADDR+$000,VWR,$100
+		tia Hero4+MPR3ADDR+$200,VWR,$100
+		tia Hero4+MPR3ADDR+$400+,VWR,$100
+		
+		rts
+	+:
+	cpx #31
+	bne +
+		tia Hero4+MPR3ADDR+$100,VWR,$100
+		tia Hero4+MPR3ADDR+$300,VWR,$100
+		tia Hero4+MPR3ADDR+$500+,VWR,$100
+		
+		rts
+	+:
+
+	rts
+
+vdc_int:
+VDC_INT:
+
+		pha
+		lda.w  VDC_STATUS
+		and #$20
+		beq +		
+			jsr Ennemi2_anim
+			jsr Ennemi_anim
+			jsr Hero_anim
+			PCE_VDC RCR,$0120
+
+			bra ++ 
+		+:
+			
+			jsr READ_IO
+			stz _vblank	
+																	
+		++:												
+				
+
+		pla
+	
+	rti
+	
+nmi:
+timer:
+irq:
+
+	rti
